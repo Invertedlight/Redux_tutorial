@@ -1,4 +1,15 @@
-function createStore () {
+
+
+// reducer function
+function todos (state = [], action) {
+	if (action.type === 'ADD_TODO') {
+		return state.concat([action.todo])
+	}
+
+	return state
+}
+
+function createStore (reducer) {
 	// The store has 4 parts
 	// 1 internal state
 	// 2 get state
@@ -8,7 +19,7 @@ function createStore () {
 	let state
 	let listeners = []
 
-	const setState = () => state 
+	const getState = () => state 
 
 	const subscribe = (listener) => {
 		listeners.push(listener)
@@ -17,9 +28,17 @@ function createStore () {
 		}
 	}
 
+	const dispatch = (action) => {
+		// call todo
+		// loop over listeners and invoke them
+		state = reducer(state, action);
+		listeners.forEach((listener) => listener());
+	}
+
 		return {
 			getState,
-			subscribe,	
+			subscribe,
+			dispatch,	
 		}
 	}
 
