@@ -1,12 +1,62 @@
 
+// {
+//   type: 'ADD_TODO',
+//   todo: {
+//     id: 0,
+//     name: 'Learn Redux',
+//     complete: false,
+//   }
+// }
+
+// {
+//   type: 'ADD_TODO',
+//   todo: {
+//     id: 1,
+//     name: 'Learn React',
+//     complete: false,
+//   }
+// }
+
+// {
+//   type: 'REMOVE_TODO',
+//   id: 0,
+// }
+
+// {
+//   type: 'TOGGLE_TODO',
+//   id: 0,
+// }
+
+// {
+//   type: 'ADD_GOAL',
+//   goal: {
+//     id: 0,
+//     name: 'Run a Marathon'
+//   }
+// }
+
+// {
+//   type: 'REMOVE_GOAL',
+//   id: 0
+// }
+
+// create an action function to use when executing store.dispatch(xxxx)
+// store.dispatch(() => {
+// 	 console.log('The new state is: ', store.getState());
+// })
 
 // reducer function
 function todos (state = [], action) {
-	if (action.type === 'ADD_TODO') {
-		return state.concat([action.todo])
+	switch(action.type) {
+		case 'ADD_TODO' :
+			return state.concat([action.todo])
+		case 'REMOVE_TODO' :
+			return state.filter((todo) => todo.id !== action.id)
+		case 'TOGGLE_TODO' :
+			return state.map((todo) => todo.id !== action.id ? todo : Object.assign({}, todo, {complete: !todo.complete}))
+		default :
+			return state
 	}
-
-	return state
 }
 
 function createStore (reducer) {
