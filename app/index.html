@@ -8,6 +8,8 @@
 	<script src='https://unpkg.com/react@16.3.0-alpha.1/umd/react.development.js'></script>
   <script src='https://unpkg.com/react-dom@16.3.0-alpha.1/umd/react-dom.development.js'></script>
 	<script src='https://unpkg.com/babel-standalone@6.15.0/babel.min.js'></script>
+
+	<script src='https://tylermcginnis.com/goals-todos-api/index.js'></script>
 </head>
 <body>
 	<div id='app'></div>
@@ -17,11 +19,6 @@
 			return Math.random().toString(36).substring(2) + (new Date()).getTime().toString(36);
 		}
 
-		// App code
-		// create an action function to use when executing store.dispatch(xxxx)
-		// store.dispatch(() => {
-		// 	 console.log('The new state is: ', store.getState());
-		// })
 
 		const ADD_TODO = 'ADD_TODO';
 		const REMOVE_TODO = 'REMOVE_TODO';
@@ -29,6 +26,7 @@
 		const ADD_GOAL = 'ADD_GOAL';
 		const REMOVE_GOAL = 'REMOVE_GOAL';
 		const TOGGLE_GOAL = 'TOGGLE_GOAL';
+		const RECEIVE_DATA = 'RECEIVE_DATA';
 
 
 //Action creators
@@ -74,6 +72,13 @@ function toggleGoalAction (id) {
 	}
 }
 
+function receiveDataAction (todos, goals) {
+	return {
+		type: RECEIVE_DATA,
+		todos,
+		goals,
+	}
+}
 
 // Middleware for Redux
 const checker = (store) => (next) => (action) => {
@@ -112,6 +117,8 @@ function todos (state = [], action) {
 			return state.filter((todo) => todo.id !== action.id)
 		case TOGGLE_TODO :
 			return state.map((todo) => todo.id !== action.id ? todo : Object.assign({}, todo, {complete: !todo.complete}))
+		case RECEIVE_DATA :
+			return action.todos
 		default :
 			return state
 	}
@@ -126,6 +133,8 @@ function goals (state = [], action) {
 			return state.filter((goal) => goal.id !== action.id)
 		case TOGGLE_GOAL : 
 			return state.map((goal) => goal.id !== action.id ? goal : Object.assign({}, goal, {complete: !goal.complete}))
+		case RECEIVE_DATA :
+			return action.goals
 		default :
 			return state
 	}
@@ -249,6 +258,12 @@ const store = Redux.createStore(Redux.combineReducers({
 			componentDidMount () {
 				const { store } = this.props;
 
+				Promise.all([
+					API.fetchTodos(),
+					API.fetchGoals(),
+				]).then(([ todos, goals ]) => {
+					store.dispatch(receiveDataAction(todos, goals))
+					})
 				store.subscribe(() => this.forceUpdate())
 			}
 			render() {
