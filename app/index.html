@@ -82,6 +82,8 @@ function toggleGoalAction (id) {
 	}
 }
 
+
+
 // reducer function
 function todos (state = [], action) {
 	switch(action.type) {
@@ -147,10 +149,11 @@ function addTodoToDOM (todo) {
 	node.appendChild(text);
 	node.appendChild(removeBtn);
 
-	//node.style.textDecoration = todo.complete ? 'line-through' : 'none';
+	node.style.textDecoration = todo.complete ? 'line-through' : 'none';
 	node.addEventListener('click', () => {
 		store.dispatch(toggleTodoAction(todo.id));
 	});
+
 
 	document.getElementById('todos').appendChild(node);
 }
@@ -166,10 +169,11 @@ function addGoalToDOM (goal) {
 	node.appendChild(text);
 	node.appendChild(removeBtn);
 
-	//node.style.textDecoration = goal.complete ? 'line-through' : 'none';
+	node.style.textDecoration = goal.complete ? 'line-through' : 'none';
 	node.addEventListener('click', () => {
 		store.dispatch(toggleGoalAction(goal.id));
 	});
+
 
 	document.getElementById('goals').appendChild(node);
 }
