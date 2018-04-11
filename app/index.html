@@ -138,6 +138,17 @@ function handleAddGoal (name, cb) {
   }
 }
 
+function handleInitialData (id) {
+	return (dispatch) => {
+		return Promise.all([
+			API.fetchTodos(),
+			API.fetchGoals(),
+		]).then(([ todos, goals ]) => {
+			dispatch(receiveDataAction(todos, goals))
+		})
+	}
+}
+
 // Middleware for Redux
 const checker = (store) => (next) => (action) => {
 	if ( 
@@ -326,12 +337,8 @@ const store = Redux.createStore(Redux.combineReducers({
 			componentDidMount () {
 				const { store } = this.props;
 
-				Promise.all([
-					API.fetchTodos(),
-					API.fetchGoals(),
-				]).then(([ todos, goals ]) => {
-					store.dispatch(receiveDataAction(todos, goals))
-					})
+				store.dispatch(handleInitialData())
+				
 				store.subscribe(() => this.forceUpdate())
 			}
 			render() {
